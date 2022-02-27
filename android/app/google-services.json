@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "592506856172",
+    "project_id": "todo-app-58bea",
+    "storage_bucket": "todo-app-58bea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:592506856172:android:8df72c88d1f5ac7f91fbc9",
+        "android_client_info": {
+          "package_name": "com.shema_derrick.to_do_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "592506856172-irfl9q8bu28rkufdfn3qvbju9odt4jt1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhEiljhVWY4dsAIz9aIA1BJ642M18MsRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "592506856172-irfl9q8bu28rkufdfn3qvbju9odt4jt1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

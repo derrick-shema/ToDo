@@ -51,16 +51,16 @@ INSERT INTO $_tasksTable (description)
     return result
         .map<Task>((e) => Task(
       description: e['description'] as String,
-      id: e['task_id'] as int,
+      id: e['task_id'] as String,
     ))
         .toList();
 
   }
 
-  Future<Task> insertTask(String description) async {
+  Future<Task> insertTask(String description, DateTime? dateTime) async {
     final db = await database;
     final id = await db.insert(_tasksTable, {'description': description});
-    return Task(description:description, id: id);
+    return Task(description:description);
   }
 
   Future<int> removeTask(Task task) async {

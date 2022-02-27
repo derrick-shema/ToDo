@@ -1,10 +1,13 @@
+import 'package:to_do_app/services/firestore_backend.dart';
+
 import '../model/task.dart';
 import 'fake_data.dart';
 import 'local_storage.dart';
 import 'storage.dart';
 
 class MyController {
-  static Storage storage = LocalStorage();
+  static Storage storage = FirestoreBackend();
+  //static Storage storage = LocalStorage();
 
   // static List<Task> getTasks() {
   //   return FakeData.getTasks();
@@ -18,7 +21,7 @@ class MyController {
     return storage.removeTask(task);
   }
 
-  static Future<Task> addTask(String description) {
-    return storage.insertTask(description);
+  static Future<Task> addTask(String description, DateTime? dateTime) {
+    return storage.insertTask(description, dateTime);
   }
 }

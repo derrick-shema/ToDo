@@ -1,7 +1,8 @@
 class Task {
   bool isCompleted;
   final String description;
-  final int id;
+  final String id;
+  final DateTime dueDate;
 
-  Task({this.description = '', required this.id}) : isCompleted = false;
+  Task({this.description = '', this.id = '', DateTime? dueDate}) : isCompleted = false, dueDate = dueDate ?? DateTime.now();
 }
