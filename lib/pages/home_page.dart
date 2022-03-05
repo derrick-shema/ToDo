@@ -1,6 +1,6 @@
-//For Week 6 Homework
+//For Week 7 Homework
 //Estimated time of completion: 4 hours
-//Actual time of completion: 10 hours
+//Actual time of completion: 7 hours
 
 import 'package:flutter/material.dart';
 import 'package:to_do_app/pages/new_task_page.dart';
@@ -8,6 +8,7 @@ import 'package:to_do_app/services/my_controller.dart';
 import 'package:to_do_app/utils/date_converter.dart';
 
 import '../model/task.dart';
+import 'opening_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,19 +23,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder <List<Task>>(
+    return FutureBuilder<List<Task>>(
       future: _tasksFuture,
       builder: (context, snapshot) {
         _tasks = snapshot.hasData ? snapshot.data! : [];
 
         return Scaffold(
+          drawer: Drawer(
+            child: SafeArea(
+              child: Column(
+                children: [
+                  ListTile(
+                    title: Text('Sign out'),
+                    onTap: () {
+                      // TODO sign user out of Firebase Auth
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (_) => OpeningPage()),
+                          (_) => false);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
           body: ListView.separated(
             itemBuilder: (_, index) {
               return _toWidget(_tasks![index]);
             },
             separatorBuilder: (_, __) => Divider(),
             itemCount: _tasks!.length,
-        ),
+          ),
           appBar: AppBar(
             title: const Text('Todo'),
             actions: [
@@ -57,29 +75,26 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => NewTaskPage()))
-                  .then(
-                      (result) async {
-                    if (result != null &&
-                        result.isNotEmpty) {
-                      //todo create a new task based on the result
-                      // final taskFromResult = Task(
-                      //     description: result, id: '' as int);
-                      // //to use setState to add the new task to the list of tasks
-                      // setState(() {
-                      //   _tasks?.add(taskFromResult);
-                      // });
-                      final task = await MyController.addTask(result[0], result[1]);
-                      setState(() => _tasks?.add(task));
-
-                    }
-                  });
+                  .then((result) async {
+                if (result != null && result.isNotEmpty) {
+                  //todo create a new task based on the result
+                  // final taskFromResult = Task(
+                  //     description: result, id: '' as int);
+                  // //to use setState to add the new task to the list of tasks
+                  // setState(() {
+                  //   _tasks?.add(taskFromResult);
+                  // });
+                  final task = await MyController.addTask(result[0], result[1]);
+                  setState(() => _tasks?.add(task));
+                }
+              });
             },
           ),
-
         );
       },
     );
   }
+
   Widget _toWidget(Task t) {
     final converter = DateConverter();
     //return Container();
@@ -91,20 +106,16 @@ class _HomePageState extends State<HomePage> {
         });
       },
       title: Text(t.description),
-        subtitle: Text(
-          converter.dateToString(dateTime: t.dueDate) ?? '',
-          style: TextStyle(color: _isExpired(t.dueDate) ? Colors.red : null),
-        ),
-
+      subtitle: Text(
+        converter.dateToString(dateTime: t.dueDate) ?? '',
+        style: TextStyle(color: _isExpired(t.dueDate) ? Colors.red : null),
+      ),
     );
   }
+
   bool _isExpired(DateTime? dateTime) {
     if (dateTime == null) return true;
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
     return dateTime.compareTo(yesterday) <= 0;
   }
 }
-
-
-
-
