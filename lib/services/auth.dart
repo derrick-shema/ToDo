@@ -7,7 +7,7 @@ class Auth {
       {required String email, required String password}) async {
     try {
       // TODO use _auth to create an account
-      final userCredential = _auth
+      final userCredential = await _auth
           .signInWithEmailAndPassword(email: email, password: password);
       return null;
     } on FirebaseAuthException catch (e) {
@@ -19,7 +19,7 @@ class Auth {
       {required String email, required String password}) async {
     try {
       // TODO use _auth to create an account
-      final userCredential = _auth
+      final userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       return null;
     } on FirebaseAuthException catch (e) {

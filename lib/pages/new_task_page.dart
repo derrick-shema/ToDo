@@ -1,55 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:to_do_app/pages/viewmodels/new_task_view_model.dart';
 import 'package:to_do_app/utils/date_converter.dart';
+import 'package:provider/provider.dart';
 
-class NewTaskPage extends StatefulWidget {
+
+class NewTaskPage extends StatelessWidget {
   NewTaskPage({Key? key}) : super(key: key);
 
-  @override
-  State<NewTaskPage> createState() => _NewTaskPageState();
-}
-
-class _NewTaskPageState extends State<NewTaskPage> {
-  final TextEditingController _controller = TextEditingController();
   final converter = DateConverter();
-  DateTime today = DateTime.now();
-  DateTime? _selectedDate;
-  DateTime? get date {
-    return _selectedDate;
-  }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  // }
+
 
 
   @override
   Widget build(BuildContext context) {
-
+    DateTime today = DateTime.now();
     return Scaffold(
       appBar: AppBar(title: const Text('Add New Task')),
       body: ListView(
         children: [
-           TextField(
+          TextField(
             decoration: const InputDecoration(labelText: 'New task'),
-            controller: _controller,
+            //controller: _controller
+            onChanged: (String updatedValue) => context.read<NewTaskViewModel>().setDescription(updatedValue),
             minLines: 3,
             maxLines: null,
           ),
           ElevatedButton(
-            onPressed: () => showDatePicker(
-              context: context,
-              initialDate: today.add(const Duration(days: 3)),
-              firstDate: today,
-              lastDate: today.add(const Duration(days: 1000)),
-            ).then((DateTime? value) => setState(() => _selectedDate = value)),
+            onPressed: () =>
+                showDatePicker(
+                  context: context,
+                  initialDate: today.add(const Duration(days: 3)),
+                  firstDate: today,
+                  lastDate: today.add(const Duration(days: 1000)),
+                ).then((DateTime? value) => context.read<NewTaskViewModel>().setDate(value)),
             child: Text(
-                converter.dateToString(dateTime: _selectedDate) ?? 'Select Due Date'),
+                converter.dateToString(dateTime: context.watch<NewTaskViewModel>().getDate()) ??
+                    'Select Due Date'),
           ),
 
           ElevatedButton(
-              onPressed: () => Navigator.of(context).pop([_controller.text, _selectedDate]),
+              onPressed: () =>
+                  Navigator.of(context).pop([context.read<NewTaskViewModel>().getDescription(), context.read<NewTaskViewModel>().getDate() ]),
               child: const Text('Save'))
         ],
       ),

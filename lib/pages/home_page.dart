@@ -1,6 +1,5 @@
-//For Week 7 Homework
-//Estimated time of completion: 4 hours
-//Actual time of completion: 7 hours
+//Estimated time: 3 hours
+//Actual time: 5 hours
 
 import 'package:flutter/material.dart';
 import 'package:to_do_app/pages/new_task_page.dart';

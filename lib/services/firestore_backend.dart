@@ -48,7 +48,5 @@ class FirestoreBackend implements Storage {
   Future<void> removeTask(Task task) async {
     final result = FirebaseFirestore.instance.collection(_tasks).doc(task.id);
     return await result.delete();
-
-    //return Future.sync(() => null);
   }
 }
