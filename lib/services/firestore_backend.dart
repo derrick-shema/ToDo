@@ -46,7 +46,9 @@ class FirestoreBackend implements Storage {
 
   @override
   Future<void> removeTask(Task task) async {
-    final result = FirebaseFirestore.instance.collection(_tasks).doc(task.id);
+    final userId = MyController.getUserId();
+    if (userId == null) throw StateError('Not logged in');
+    final result = FirebaseFirestore.instance.collection(_users).doc(userId).collection(_tasks).doc(task.id);
     return await result.delete();
   }
 }
