@@ -1,10 +1,11 @@
 //Estimated time: 3 hours
-//Actual time: 7 hours
+//Actual time: 5 hours
 
 import 'dart:typed_data';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:to_do_app/pages/new_task_page.dart';
@@ -105,10 +106,6 @@ class _HomePageState extends State<HomePage> {
                     },
                     icon: const Icon(Icons.delete),
                   ),
-                // if (context.watch<ProfilePictureNotifier>().exists)
-                //   CircleAvatar(
-                //     backgroundImage: MemoryImage(FirebaseStorage().getProfilePicture()),
-                //   )
               ],
             ),
             floatingActionButton: FloatingActionButton(
@@ -142,6 +139,7 @@ class _HomePageState extends State<HomePage> {
     final converter = DateConverter();
     //return Container();
     return CheckboxListTile(
+      checkColor: HexColor("3c1518"),
       key: ValueKey(t),
       value: t.isCompleted,
       onChanged: (newValue) {

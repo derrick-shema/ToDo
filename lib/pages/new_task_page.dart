@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:to_do_app/pages/viewmodels/new_task_view_model.dart';
 import 'package:to_do_app/utils/date_converter.dart';
 import 'package:provider/provider.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 
 class NewTaskPage extends StatelessWidget {
@@ -22,7 +23,8 @@ class NewTaskPage extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime today = DateTime.now();
     return Scaffold(
-      appBar: AppBar(title: const Text('Add New Task')),
+      appBar: AppBar(title: const Text('Add New Task'),
+      backgroundColor: HexColor("#3c1518")),
       body: ListView(
         children: [
           TextField(
