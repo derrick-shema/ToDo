@@ -28,7 +28,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final Future<List<Task>> _tasksFuture = MyController.getTasks();
   List<Task>? _tasks;
-  final Future<Uint8List?> imageData = FirebaseStorage().getProfilePicture();
+
+  //final Future<Uint8List?> imageData = FirebaseStorage().getProfilePicture();
 
   @override
   Widget build(BuildContext context) {
@@ -40,96 +41,110 @@ class _HomePageState extends State<HomePage> {
         return ChangeNotifierProvider<ProfilePictureNotifier>(
           //return FutureBuilder<Uint8List>
           create: (context) => ProfilePictureNotifier(),
-          builder: (context, child) { return Scaffold(
-            drawer: Drawer(
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: (context.watch<ProfilePictureNotifier>().exists) ? Text('Update profile picture') : Text('Add profile picture'),
-                      onTap: () {
-                        // TODO change user profile picture
-
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Sign out'),
-                      onTap: () {
-                        // TODO sign user out of Firebase Auth
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (_) => OpeningPage()),
-                            (_) => false);
-                      },
-                    ),
-                  ],
+          builder: (context, child) {
+            return Scaffold(
+              drawer: Drawer(
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: (context.watch<ProfilePictureNotifier>().exists)
+                            ? Text('Update profile picture')
+                            : Text('Add profile picture'),
+                        onTap: () async {
+                          final value = await showModalBottomSheet(
+                              builder: (_) => ImageSelectDialog(), context: context);
+                          if (value is Uint8List) {
+                            context
+                                .read<ProfilePictureNotifier>()
+                                .updateProfilePicture(value);
+                          } // TODO change user profile picture
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Sign out'),
+                        onTap: () {
+                          // TODO sign user out of Firebase Auth
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => OpeningPage()),
+                              (_) => false);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            body: //ListView.separated(//
-                //   itemBuilder: (_, index) {
-                //     return _toWidget(_tasks![index]);
-                //   },
-                //   separatorBuilder: (_, __) => Divider(),
-                //   itemCount: _tasks!.length,
-                // ),
-                ReorderableListView(
-              children: Iterable<int>.generate(_tasks!.length)
-                  .map((index) => _toWidget(_tasks![index]))
-                  .map<List<Widget>>((e) => [e, Divider(key: UniqueKey())])
-                  .expand<Widget>((e) => e)
-                  .toList(),
-              onReorder: (oldIndex, newIndex) {
-                print('old: $oldIndex\tnew: $newIndex');
+              body: //ListView.separated(//
+                  //   itemBuilder: (_, index) {
+                  //     return _toWidget(_tasks![index]);
+                  //   },
+                  //   separatorBuilder: (_, __) => Divider(),
+                  //   itemCount: _tasks!.length,
+                  // ),
+                  ReorderableListView(
+                children: Iterable<int>.generate(_tasks!.length)
+                    .map((index) => _toWidget(_tasks![index]))
+                    .map<List<Widget>>((e) => [e, Divider(key: UniqueKey())])
+                    .expand<Widget>((e) => e)
+                    .toList(),
+                onReorder: (oldIndex, newIndex) {
+                  print('old: $oldIndex\tnew: $newIndex');
 
-                setState(() {
-                  /* TODO reorder _tasks */
-                  if (newIndex > oldIndex) {
-                    newIndex -= 1;
-                  }
-                  final task = _tasks!.removeAt(oldIndex);
-                  _tasks!.insert(newIndex, task);
-                });
-              },
-            ),
-            appBar: AppBar(
-              title: const Text('Todo'),
-              actions: [
-                if (_tasks!.any((task) => task.isCompleted))
-                  IconButton(
-                    onPressed: () {
-                      _tasks
-                          ?.where((task) => task.isCompleted)
-                          .forEach(MyController.deleteTask);
-                      setState(() {
-                        _tasks?.removeWhere((Task t) => t.isCompleted);
-                      });
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              child: const Icon(Icons.add),
-              onPressed: () {
-                FirebaseMessaging.instance.getToken().then(print);
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (_) => NewTaskPage()))
-                    .then((result) async {
-                  if (result != null && result.isNotEmpty) {
-                    //todo create a new task based on the result
-                    // final taskFromResult = Task(
-                    //     description: result, id: '' as int);
-                    // //to use setState to add the new task to the list of tasks
-                    // setState(() {
-                    //   _tasks?.add(taskFromResult);
-                    // });
-                    final task = await MyController.addTask(result[0], result[1]);
-                    setState(() => _tasks?.add(task));
-                  }
-                });
-              },
-            ),
-          );},
+                  setState(() {
+                    /* TODO reorder _tasks */
+                    if (newIndex > oldIndex) {
+                      newIndex -= 1;
+                    }
+                    final task = _tasks!.removeAt(oldIndex);
+                    _tasks!.insert(newIndex, task);
+                  });
+                },
+              ),
+              appBar: AppBar(
+                title: const Text('Todo'),
+                actions: [
+                  if (_tasks!.any((task) => task.isCompleted))
+                    IconButton(
+                      onPressed: () {
+                        _tasks
+                            ?.where((task) => task.isCompleted)
+                            .forEach(MyController.deleteTask);
+                        setState(() {
+                          _tasks?.removeWhere((Task t) => t.isCompleted);
+                        });
+                      },
+                      icon: const Icon(Icons.delete),
+                    ),
+                  if (context.watch<ProfilePictureNotifier>().exists)
+                    CircleAvatar(
+                      backgroundImage: MemoryImage(context.read<ProfilePictureNotifier>().data!),
+                    ),
+                ],
+              ),
+              floatingActionButton: FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () {
+                  FirebaseMessaging.instance.getToken().then(print);
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => NewTaskPage()))
+                      .then((result) async {
+                    if (result != null && result.isNotEmpty) {
+                      //todo create a new task based on the result
+                      // final taskFromResult = Task(
+                      //     description: result, id: '' as int);
+                      // //to use setState to add the new task to the list of tasks
+                      // setState(() {
+                      //   _tasks?.add(taskFromResult);
+                      // });
+                      final task =
+                          await MyController.addTask(result[0], result[1]);
+                      setState(() => _tasks?.add(task));
+                    }
+                  });
+                },
+              ),
+            );
+          },
         );
       },
     );
